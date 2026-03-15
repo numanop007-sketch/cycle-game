@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cycle Game</title>
+<style>
+body{margin:0;overflow:hidden;background:#87CEEB;}
+canvas{background:#6ab04c;display:block;}
+</style>
+</head>
+<body>
+
+<canvas id="game" width="800" height="400"></canvas>
+
+<script>
+let canvas=document.getElementById("game");
+let ctx=canvas.getContext("2d");
+
+let cycle={x:100,y:300,w:40,h:40,vy:0,gravity:0.6};
+let obstacles=[];
+let score=0;
+
+function drawCycle(){
+ctx.fillStyle="red";
+ctx.fillRect(cycle.x,cycle.y,cycle.w,cycle.h);
+}
+
+function drawObstacle(o){
+ctx.fillStyle="black";
+ctx.fillRect(o.x,o.y,o.w,o.h);
+}
+
+function update(){
+ctx.clearRect(0,0,800,400);
+
+cycle.vy+=cycle.gravity;
+cycle.y+=cycle.vy;
+
+if(cycle.y>300){
+cycle.y=300;
+cycle.vy=0;
+}
+
+drawCycle();
+
+if(Math.random()<0.02){
+obstacles.push({x:800,y:320,w:20,h:20});
+}
+
+for(let i=0;i<obstacles.length;i++){
+let o=obstacles[i];
+o.x-=5;
+drawObstacle(o);
+
+if(cycle.x<o.x+o.w &&
+cycle.x+cycle.w>o.x &&
+cycle.y<o.y+o.h &&
+cycle.y+cycle.h>o.y){
+alert("Game Over! Score: "+score);
+location.reload();
+}
+}
+
+score++;
+ctx.fillStyle="white";
+ctx.font="20px Arial";
+ctx.fillText("Score: "+score,10,30);
+
+requestAnimationFrame(update);
+}
+
+document.addEventListener("keydown",function(e){
+if(e.code=="Space"){
+cycle.vy=-10;
+}
+});
+
+update();
+</script>
+
+</body>
+</html>
